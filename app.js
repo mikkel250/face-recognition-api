@@ -4,6 +4,8 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const bodyParser = require("body-parser");
+const bcrypt = require("bcrypt");
+const cors = require("cors");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
@@ -21,7 +23,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+
 app.use(bodyParser.json());
+app.use(cors()); // this is all that's needed for CORS
 
 //app.use("/", indexRouter);
 app.use("/users", usersRouter);
@@ -56,7 +60,7 @@ app.post("/signin", (req, res) => {
     req.body.email === database.users[0].email &&
     req.body.password === database.users[0].password
   ) {
-    res.json("success");
+    res.json(database.users[0]);
     //res.json(req.body.user);
   } else {
     res.status(400).json("error loggin in");
@@ -65,11 +69,13 @@ app.post("/signin", (req, res) => {
 
 app.post("/register", (req, res) => {
   const { email, name, password } = req.body;
+  bcrypt.hash(password, null, null, function(err, hash) {
+    // store hash in your db
+  });
   database.users.push({
     id: "125",
     name: name,
     email: email,
-    password: password,
     entries: 0,
     joined: new Date()
   });
@@ -91,7 +97,7 @@ app.get("/profile/:id", (req, res) => {
   }
 });
 
-app.post("/image", (req, res) => {
+app.put("/image", (req, res) => {
   const { id } = req.body;
   let found = false;
 
