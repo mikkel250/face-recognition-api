@@ -7,10 +7,10 @@ const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const cors = require("cors");
 
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
+//var indexRouter = require("./routes/index");
+//var usersRouter = require("./routes/users");
 
-var port = 3001;
+var port = 5000;
 
 var app = express();
 
@@ -28,7 +28,7 @@ app.use(bodyParser.json());
 app.use(cors()); // this is all that's needed for CORS
 
 //app.use("/", indexRouter);
-app.use("/users", usersRouter);
+//app.use("/users", usersRouter);
 
 const database = {
   users: [
