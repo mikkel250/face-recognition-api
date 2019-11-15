@@ -8,9 +8,6 @@ const bcrypt = require("bcrypt-nodejs");
 const cors = require("cors");
 const knex = require("knex");
 
-//var indexRouter = require("./routes/index");
-//var usersRouter = require("./routes/users");
-
 const db = knex({
   client: "pg",
   connection: {
@@ -48,10 +45,12 @@ app.get("/", (req, res) => {
 
 app.post("/signin", (req, res) => {
   db.select("email", "hash")
-    .where("email", "=", req.body.email)
     .from("login")
+    .where("email", "=", req.body.email)
     .then(data => {
-      const isValid = bcrypt.compareSync(req.body.password, hash);
+      const isValid = bcrypt.compareSync(req.body.password, data[0].hash);
+      console.log(isValid);
+      
       if (isValid) {
         return db
           .select("*")
@@ -98,7 +97,6 @@ app.post("/register", (req, res) => {
 
 app.get("/profile/:id", (req, res) => {
   const { id } = req.params;
-  let found = false;
 
   db.select("*")
     .from("users")
@@ -118,7 +116,9 @@ app.put("/image", (req, res) => {
     .where("id", "=", id)
     .increment("entries", 1)
     .returning("entries")
-    .then(entries => res.json(entries[0]))
+    .then(entries => {
+      res.json(entries[0]);
+    })
     .catch(err => res.status(400).json("unable to get entries."));
 });
 
