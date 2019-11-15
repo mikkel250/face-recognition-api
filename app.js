@@ -8,14 +8,21 @@ const bcrypt = require("bcrypt-nodejs");
 const cors = require("cors");
 const knex = require("knex");
 
+// For local connections
+// const db = knex({
+//   client: "pg",
+//   connection: {
+//     host: "postgresql-rectangular-02422",
+//     user: "mikkel250",
+//     password: "",
+//     database: "smart-brain"
+//   }
+// });
+
+//For Heroku deploy
 const db = knex({
-  client: "pg",
-  connection: {
-    host: "127.0.0.1",
-    user: "mikkel250",
-    password: "",
-    database: "smart-brain"
-  }
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
 });
 
 db.select("*")
@@ -40,7 +47,7 @@ app.use(bodyParser.json());
 app.use(cors()); // this is all that's needed for CORS
 
 app.get("/", (req, res) => {
-  res.json(db.users);
+  res.send(`It is working!`);
 });
 
 app.post("/signin", (req, res) => {
@@ -50,7 +57,7 @@ app.post("/signin", (req, res) => {
     .then(data => {
       const isValid = bcrypt.compareSync(req.body.password, data[0].hash);
       console.log(isValid);
-      
+
       if (isValid) {
         return db
           .select("*")
