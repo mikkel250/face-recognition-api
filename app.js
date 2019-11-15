@@ -21,8 +21,11 @@ const knex = require("knex");
 
 //For Heroku deploy
 const db = knex({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
+  client: "pg",
+  connection: {
+    connectionString: process.env.DATABASE_URL,
+    ssl: true
+  }
 });
 
 db.select("*")
