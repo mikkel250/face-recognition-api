@@ -29,7 +29,7 @@ db.select("*")
   .from("users")
   .then(data => console.log(data));
 
-var port = 5000;
+var port = process.env.PORT || 5000;
 
 var app = express();
 
